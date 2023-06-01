@@ -6,6 +6,7 @@ import os
 class Data(BaseModel):
     port: int
     repo_owner: str
+    bot_name: str
     token: str
 
 config = None 
@@ -17,9 +18,13 @@ def init():
     config.read("config.ini")
 
     repo_owner = config["DEFAULT"]["repo_owner"]
+    bot_name = config["DEFAULT"]["bot_name"]
     port = int(config["server"]["port"])
 
     load_dotenv()
     token = os.getenv("GITHUB_TOKEN")
 
-    config = Data(port=port, repo_owner=repo_owner, token=token)
+    config = Data(port=port, 
+                  bot_name=bot_name,
+                  repo_owner=repo_owner, 
+                  token=token)

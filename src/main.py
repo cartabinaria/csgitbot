@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
 import configs 
+from logs import logging
 
 app = FastAPI()
 app.router.prefix = "/api"
@@ -16,6 +17,7 @@ async def upload(reponame: str) -> Reponame:
     return reponame
 
 def start():
+    logging.info("Starting server...")
     configs.init()
     uvicorn.run(app, host="0.0.0.0", port=configs.config.port)
 

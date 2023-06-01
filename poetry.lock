@@ -401,6 +401,16 @@ files = [
 ]
 
 [[package]]
+name = "logging"
+version = "0.4.9.6"
+description = "A logging module for Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "logging-0.4.9.6.tar.gz", hash = "sha256:26f6b50773f085042d301085bd1bf5d9f3735704db9f37c1ce6d8b85c38f2417"},
+]
+
+[[package]]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
@@ -935,4 +945,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d4fa9ee2eeef7503ab678acbeae480d8ce53d3ac20dbad47fdbce302d7b09b20"
+content-hash = "7ae878c73066d94c732b31250720a251b82a4b8e7186759c271402258de0fea2"
