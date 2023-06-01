@@ -3,11 +3,12 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
 
-class Data(BaseModel):
+class BaseConfig(BaseModel):
     port: int
     repo_owner: str
     bot_name: str
-    token: str
+    branch_blacklist: list[str]
+    github_token: str
 
 config = None 
 
@@ -19,12 +20,15 @@ def init():
 
     repo_owner = config["DEFAULT"]["repo_owner"]
     bot_name = config["DEFAULT"]["bot_name"]
+    branch_blacklist = config["DEFAULT"]["branch_blacklist"]
+
     port = int(config["server"]["port"])
 
     load_dotenv()
-    token = os.getenv("GITHUB_TOKEN")
+    github_token = os.getenv("GITHUB_TOKEN")
 
-    config = Data(port=port, 
+    config = BaseConfig(port=port, 
                   bot_name=bot_name,
                   repo_owner=repo_owner, 
-                  token=token)
+                  branch_blacklist=branch_blacklist.split(","),
+                  github_token=github_token)
