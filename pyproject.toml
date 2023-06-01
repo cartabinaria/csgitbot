@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "csgitbot"
+version = "0.1.0"
+description = "A bot to manage csunibo pull requests"
+authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyGithub = "^1.58.2"
+fastapi = "^0.95.2"
+pydantic = "^1.10.8"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+configparser = "^5.3.0"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.scripts]
+start = "src.main:start"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
