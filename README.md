@@ -1,4 +1,21 @@
+<!-- insert
+---
+title: "CSGITBOT"
+date: 2023-06-02T12:15:00+02:00
+---
+end_insert -->
+
+<!-- remove -->
+<!-- Powered by https://cj.rs/riss -->
 # CSGITBOT
+
+
+See [the wiki](https://csunibo.github.io/wiki/csgitbot) for more information.
+<!-- endremove -->
+
+<!-- insert
+See [github repo](https://github.com/csunibo/csgitbot) for the code
+end_insert -->
 
 A github bot used to manage workflows in csunibo
 
