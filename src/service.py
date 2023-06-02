@@ -4,6 +4,7 @@ from .configs import BaseConfig
 from .github_utils import GithubUtils, GithubUser
 import uuid
 import multiprocessing
+import datetime
     
 class MainService():
     def __init__(self, github_token: str, repo_owner: str, config: BaseConfig):
@@ -29,7 +30,7 @@ class MainService():
 
         author = None
         if username is not None and email is not None:
-            author = GithubUser(user=username, email=email)
+            author = GithubUser(user=username, email=email, date=datetime.datetime.now())
 
         if not self.github_client.branch_exists(branch_name):
             self.github_client.create_branch(branch_name)

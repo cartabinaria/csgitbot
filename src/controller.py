@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, Form, File
+from fastapi import FastAPI, UploadFile, Form, File, exceptions, Request, responses, status
 from typing import Union, Annotated, Optional
 from pydantic import BaseModel
 from . import configs
@@ -7,6 +7,14 @@ from .service import MainService
 
 app = FastAPI()
 app.router.prefix = "/api"
+
+# https://github.com/tiangolo/fastapi/issues/3361
+@app.exception_handler(exceptions.RequestValidationError)
+async def validation_exception_handler(request: Request, exc: exceptions.RequestValidationError):
+	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+	logging.error(f"{request}: {exc_str}")
+	content = {'status_code': 10422, 'message': exc_str, 'data': None}
+	return responses.JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 class BasicResponse(BaseModel):
     message: str
@@ -18,9 +26,9 @@ class ErrorResponse(BaseModel):
 async def upload_and_pr(
     reponame: str, 
     file: Annotated[UploadFile, File()],
-    username: Optional[Annotated[str, Form()]] = None,
-    email: Optional[Annotated[str, Form()]] = None,
-    pr_title: Optional[Annotated[str, Form()]] = None
+    username: Annotated[str | None, Form()] = None,
+    email: Annotated[str | None, Form()] = None,
+    pr_title: Annotated[str | None, Form()] = None,
 ) -> Union[BasicResponse, ErrorResponse]:
     branch_name = service.generate_branch_name()
 
@@ -47,11 +55,10 @@ async def upload_and_pr_with_branch_name(
     reponame: str, 
     branch_name: str, 
     file: Annotated[UploadFile, File()],
-    username: Optional[Annotated[str, Form()]] = None,
-    email: Optional[Annotated[str, Form()]] = None,
-    pr_title: Optional[Annotated[str, Form()]] = None,
+    username: Annotated[str | None, Form()] = None,
+    email: Annotated[str | None, Form()] = None,
+    pr_title: Annotated[str | None, Form()] = None,
 ) -> Union[BasicResponse, ErrorResponse]:
-
     try:
         await service.upload_and_pr(
             reponame, 

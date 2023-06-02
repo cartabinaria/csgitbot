@@ -17,7 +17,7 @@ class GithubUser(BaseModel):
         return github.InputGitAuthor(
             name=self.user,
             email=self.email,
-            date=self.date
+            date=self.date.isoformat()
         )
 
 class GithubUtils():
@@ -60,10 +60,14 @@ class GithubUtils():
         Get a branch
         """
         logger.info(f"Checking branch: '{branch_name}' on repo: '{self.repo.name}'")
-        branch = self.repo.get_branch(branch_name)
+
+        try:
+            self.repo.get_branch(branch_name)
+        except github.GithubException as e:
+            if e.status == 404:
+                return False
+            raise e
         
-        if branch is None:
-            return False
         return True
 
     def create_file(self,
@@ -86,7 +90,7 @@ class GithubUtils():
                                     f"new file uploaded by {configs.config.bot_name}", 
                                     file_content, 
                                     branch_name, 
-                                    author=author.dict() if author else github.GithubObject.NotSet)
+                                    author=author.to_input_git_author() if author else github.GithubObject.NotSet)
 
     def create_pr(self, src_branch: str, dst_branch: str, title: Optional[str], body: Optional[str] = None):
         """
@@ -106,5 +110,5 @@ class GithubUtils():
         return self.repo.get_branches()
 
     def delete_branch(self, branch_name: str):
-        logger.info(f"Deleting branch: {branch_name} on repo: {self.repo.name}")
+        logger.info(f"Deleting branch: '{branch_name}' on repo: '{self.repo.name}'")
         self.repo.get_git_ref(f"heads/{branch_name}").delete()

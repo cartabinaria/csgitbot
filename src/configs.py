@@ -35,8 +35,6 @@ def init():
     if cpu_count is None:
         cpu_count = 1 # i hope you have at least 1 cpu :D
 
-    print(cpu_count)
-    
     config = BaseConfig(port=port, 
                   bot_name=bot_name,
                   repo_owner=repo_owner, 
