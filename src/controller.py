@@ -67,6 +67,16 @@ async def upload_and_pr_with_branch_name(
 
     return BasicResponse(message="File uploaded")
 
+@app.delete("/allbranches/{reponame}")
+async def delete_all_branches(reponame: str) -> Union[BasicResponse, ErrorResponse]:
+    try:
+        service.delete_all_branches(reponame)
+    except Exception as e:
+        logging.getLogger("controller").error(f"Error occurred: {repr(e)}")
+        return ErrorResponse(error=str(e))
+
+    return BasicResponse(message="All branches deleted")
+
 def init():
     global service
     service = MainService(configs.config.github_token, configs.config.repo_owner, configs.config)

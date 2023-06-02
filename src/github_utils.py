@@ -3,7 +3,6 @@ from github import Github, Repository
 import github
 import datetime
 from typing import Optional
-import uuid
 from .logs import logging
 from . import configs
 
@@ -47,7 +46,6 @@ class GithubUtils():
         """
         Generate a new branch name as uuid
         """
-        return str(uuid.uuid4())
     
     def create_branch(self, branch_name: str, base_branch: str = "main"):
         """
@@ -76,11 +74,14 @@ class GithubUtils():
         """
         Create a new file
         """
-        if self.repo.get_contents(file_path, ref=branch_name):
-            logger.info(f"File: '{file_path}' already exists on repo: '{self.repo.name}'")
-            return
-        
         logger.info(f"Creating file: '{file_path}' on repo: '{self.repo.name}' by '{author.user if author else 'unknown'}'")
+        try:
+            if self.repo.get_contents(file_path, ref=branch_name):
+                logger.info(f"File: '{file_path}' already exists on repo: '{self.repo.name}'")
+                return
+        except github.UnknownObjectException as _:
+            pass # file does not exist
+        
         self.repo.create_file(file_path, 
                                     f"new file uploaded by {configs.config.bot_name}", 
                                     file_content, 
@@ -96,3 +97,14 @@ class GithubUtils():
             
         logger.info(f"Creating PR from {src_branch} to {dst_branch} on repo: {self.repo.name}")
         self.repo.create_pull(title=title, body="new contribution PR", head=src_branch, base=dst_branch, maintainer_can_modify=github.GithubObject.NotSet, draft=False)
+
+    def get_all_branches(self):
+        """
+        Get all branches
+        """
+        logger.info(f"Getting all branches on repo: {self.repo.name}")
+        return self.repo.get_branches()
+
+    def delete_branch(self, branch_name: str):
+        logger.info(f"Deleting branch: {branch_name} on repo: {self.repo.name}")
+        self.repo.get_git_ref(f"heads/{branch_name}").delete()
