@@ -11,6 +11,11 @@ A github bot used to manage workflows in csunibo
 5. Serve the application with `poetry run start`
 6. The application should be able to accept requests now.
 
+## Try it locally
+1. Be sure to have github token for the bot, and have it in the .env.example.
+2. Create a repository for the tests on github.
+3. Run some scripts listed  in `src/test.py` with `poetry run python3 src/test.py [flags]` and you should see some logs on the server end.
+
 # Features
 
 ## Automatic pull request
