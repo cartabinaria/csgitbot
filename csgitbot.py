@@ -9,3 +9,6 @@ def start():
 
     logging.getLogger("main").info("starting service...")
     uvicorn.run("src.controller:app", host="0.0.0.0", port=configs.config.port)
+
+if __name__ == "__main__":
+    start()

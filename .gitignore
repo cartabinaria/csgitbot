@@ -3,3 +3,4 @@ sample.pdf
 __pycache__
 .vscode
 app.log
+dist
