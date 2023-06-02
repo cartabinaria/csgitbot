@@ -10,7 +10,7 @@ end_insert -->
 # CSGITBOT
 
 
-See [the wiki](https://csunibo.github.io/wiki/csgitbot) for more information.
+See [the wiki](https://csunibo.github.io/wiki/bot/csgitbot/) for more information.
 <!-- endremove -->
 
 <!-- insert
