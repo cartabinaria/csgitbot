@@ -1,6 +1,6 @@
 <!-- insert
 ---
-title: "CSGITBOT"
+title: "Csgitbot"
 date: 2023-06-02T12:15:00+02:00
 ---
 end_insert -->
