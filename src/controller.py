@@ -22,6 +22,10 @@ class BasicResponse(BaseModel):
 class ErrorResponse(BaseModel):
     error: str
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
 @app.post("/{reponame}")
 async def upload_and_pr(
     reponame: str, 
