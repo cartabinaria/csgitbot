@@ -17,7 +17,7 @@ logging = "^0.4.9.6"
 python-multipart = "^0.0.6"
 
 [tool.poetry.scripts]
-start = "main:start"
+start = "csgitbot:start"
 
 [build-system]
 requires = ["poetry-core"]

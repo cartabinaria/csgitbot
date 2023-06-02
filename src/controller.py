@@ -1,11 +1,9 @@
-""" main AKA controller file! """
 from fastapi import FastAPI, UploadFile, Form, File
-import uvicorn
-import configs 
-from logs import logging
 from typing import Union, Annotated, Optional
-from service import MainService
 from pydantic import BaseModel
+from . import configs
+from .logs import logging
+from .service import MainService
 
 app = FastAPI()
 app.router.prefix = "/api"
@@ -27,6 +25,8 @@ async def upload_and_pr(
     branch_name = service.generate_branch_name()
 
     try:
+        assert isinstance(branch_name, str), "branch name is not a string"
+
         await service.upload_and_pr(
             reponame, 
             branch_name, 
@@ -67,18 +67,6 @@ async def upload_and_pr_with_branch_name(
 
     return BasicResponse(message="File uploaded")
 
-
-def start():
-    logging.getLogger("main").info("Loading configuration...")
-    configs.init()
-
+def init():
     global service
     service = MainService(configs.config.github_token, configs.config.repo_owner, configs.config)
-
-    logging.getLogger("main").info("starting service...")
-    uvicorn.run(app, host="0.0.0.0", port=configs.config.port)
-
-if __name__ == "__main__":
-    start()
-
-# dop andare a spostare in service e utilities di github in altro file.

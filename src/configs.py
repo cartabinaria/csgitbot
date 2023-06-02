@@ -24,7 +24,7 @@ def init():
 
     port = int(config["server"]["port"])
 
-    load_dotenv()
+    load_dotenv(".env")
     github_token = os.getenv("GITHUB_TOKEN")
 
     config = BaseConfig(port=port, 

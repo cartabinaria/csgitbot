@@ -1,9 +1,8 @@
-from pydantic import BaseModel
 from typing import Optional
 from fastapi import UploadFile
-from github_utils import GithubUtils, GithubUser
-from logs import logging
-from configs import BaseConfig
+from .logs import logging
+from .configs import BaseConfig
+from .github_utils import GithubUtils, GithubUser
 
     
 class MainService():

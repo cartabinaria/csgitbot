@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 from github import Github, Repository
 import github
-from logs import logging
 import datetime
 from typing import Optional
-import configs
 import uuid
+from .logs import logging
+from . import configs
 
 logger = logging.getLogger("service")
 
