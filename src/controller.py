@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, exceptions, Request, responses, stat
 from .logs import logging
 
 from .endpoints import github, oauth, init_endpoints
+import pkg_resources
 
     
 app = FastAPI()
@@ -18,6 +19,10 @@ async def catch_exceptions_middleware(request: Request, exc: HTTPException):
 
     content = {'status_code': exc.status_code, 'message': exc.detail, 'data': None}
     return responses.JSONResponse(content=content, status_code=exc.status_code)
+
+@app.get("/", response_class=responses.FileResponse)
+async def root():
+    return pkg_resources.resource_filename("csgitbot", "static/index.html")
 
 # https://github.com/tiangolo/fastapi/issues/3361
 # @app.exception_handler(exceptions.RequestValidationError)

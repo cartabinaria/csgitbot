@@ -21,6 +21,7 @@ class OAuthCallbackResponse(BaseModel):
     username: str
     email: str
 
+@router.post("/login", name="login")
 @router.get("/login", name="login")
 async def login():
     github_oauth_url = f"https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&original_url=prova"
