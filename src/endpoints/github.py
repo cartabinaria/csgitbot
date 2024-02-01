@@ -1,17 +1,18 @@
-from fastapi import FastAPI, UploadFile, Form, File, exceptions, Request, responses, status
+from fastapi import Depends, Security, UploadFile, Form, File, exceptions, Request, responses, status
 from typing import Union, Annotated, Optional
 from pydantic import BaseModel
 
-from .. import configs
-from ..logs import logging
-from ..service import MainService
-
+import src.configs as configs
+from src.logs import logging
+from src.service import MainService
+from src.endpoints.oauth import decode_token, OAuthCallbackResponse
 
 from fastapi import APIRouter
 
 router = APIRouter()
 # service = MainService(configs.config.github_token, configs.config.repo_owner, configs.config)
 service = None
+
 class BasicResponse(BaseModel):
     message: str
 
@@ -21,6 +22,11 @@ class ErrorResponse(BaseModel):
 @router.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+@router.get("/data")
+async def get_data(payload: OAuthCallbackResponse = Security(decode_token)):
+    print(payload)
+    return {"message": "Here is your data", "user": payload}
 
 @router.post("/{reponame}")
 async def upload_and_pr(

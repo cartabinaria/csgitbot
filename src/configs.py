@@ -4,6 +4,11 @@ from dotenv import load_dotenv
 import os
 import pkg_resources
 
+class JWTConfig(BaseModel):
+    secret_key: str
+    algorithm: str
+    access_token_expiration: int
+
 class BaseConfig(BaseModel):
     port: int
     repo_owner: str
@@ -12,11 +17,13 @@ class BaseConfig(BaseModel):
     github_token: str
     cpu_count: int
 
-
     # oauth attributes
     client_id: str
     client_secret: str
     redirect_uri: str
+
+    # jwt attributes
+    jwt_config: JWTConfig
 
 config = None 
 
@@ -42,14 +49,21 @@ def init():
 
     port = int(config["server"]["port"])
 
-    load_env_files(["GITHUB_TOKEN", "CLIENT_ID", "CLIENT_SECRET"])
+    load_env_files(["GITHUB_TOKEN", "CLIENT_ID", "CLIENT_SECRET", "JWT_SECRET"])
     github_token = os.getenv("GITHUB_TOKEN")
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
+    jwt_secret = os.getenv("JWT_SECRET")
 
     cpu_count = os.cpu_count()
     if cpu_count is None:
         cpu_count = 1 # i hope you have at least 1 cpu :D
+
+    jwt_config = JWTConfig(
+        secret_key=jwt_secret,
+        algorithm=config["jwt"]["algorithm"],
+        access_token_expiration=config["jwt"]["access_token_expiration"],
+    )
 
     config = BaseConfig(port=port,
                   bot_name=bot_name,
@@ -60,4 +74,6 @@ def init():
                   client_id=client_id,
                   client_secret=client_secret,
                   redirect_uri=redirect_uri,
+
+                  jwt_config=jwt_config,
     )
