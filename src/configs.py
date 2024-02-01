@@ -12,7 +12,21 @@ class BaseConfig(BaseModel):
     github_token: str
     cpu_count: int
 
+
+    # oauth attributes
+    client_id: str
+    client_secret: str
+    redirect_uri: str
+
 config = None 
+
+def load_env_files(keys: list[str]):
+    load_dotenv(pkg_resources.resource_filename("csgitbot", ".env"))
+
+    for key in keys:
+        if os.getenv(key) is None:
+            print(f"{key} not found in .env file, exiting...")
+            exit(1)
 
 def init():
     global config
@@ -24,22 +38,26 @@ def init():
     repo_owner = config["DEFAULT"]["repo_owner"]
     bot_name = config["DEFAULT"]["bot_name"]
     branch_blacklist = config["DEFAULT"]["branch_blacklist"]
+    redirect_uri = config["DEFAULT"]["redirect_uri"]
 
     port = int(config["server"]["port"])
 
-    load_dotenv(pkg_resources.resource_filename("csgitbot", ".env"))
+    load_env_files(["GITHUB_TOKEN", "CLIENT_ID", "CLIENT_SECRET"])
     github_token = os.getenv("GITHUB_TOKEN")
-    if github_token is None:
-        print("GITHUB_TOKEN not found in .env file, exiting...")
-        exit(1)
+    client_id = os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
 
     cpu_count = os.cpu_count()
     if cpu_count is None:
         cpu_count = 1 # i hope you have at least 1 cpu :D
 
-    config = BaseConfig(port=port, 
+    config = BaseConfig(port=port,
                   bot_name=bot_name,
-                  repo_owner=repo_owner, 
+                  repo_owner=repo_owner,
                   branch_blacklist=branch_blacklist.split(","),
                   cpu_count=cpu_count,
-                  github_token=github_token)
+                  github_token=github_token,
+                  client_id=client_id,
+                  client_secret=client_secret,
+                  redirect_uri=redirect_uri,
+    )
