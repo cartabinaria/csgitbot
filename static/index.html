@@ -12,6 +12,10 @@
         NOTE: this page is for testing purposes only. You shouldn't use the API from this page.
 
         <form action="/api/uploadfiles/" method="post" enctype="multipart/form-data">
+            <label for="repository">Repository:</label>
+            <input type="text" name="repository" id="repository">
+            <label for="path">Path:</label>
+            <input type="text" name="path" id="path">
             <input type="file" name="files" multiple>
             <input type="submit" value="Upload">
         </form>

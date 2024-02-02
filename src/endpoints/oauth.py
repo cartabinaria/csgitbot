@@ -71,7 +71,7 @@ async def decode_token(token: str = Depends(get_token_or_throw)):
         # Add your JWT secret key used for encoding here
         secret_key = configs.config.jwt_config.secret_key
         payload = jwt.decode(token, secret_key, algorithms=[configs.config.jwt_config.algorithm])
-        return payload
+        return OAuthCallbackResponse(**payload)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
