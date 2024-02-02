@@ -97,10 +97,13 @@ class GithubUtils():
         Create a new PR
         """
         if title is None:
-            title = f"bot PR"
-            
+            title = f"CSGITBOT: pr on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        
+        if body is None:
+            body = "pr created automatically"
+
         logger.info(f"Creating PR from {src_branch} to {dst_branch} on repo: {self.repo.name}")
-        self.repo.create_pull(title=title, body="new contribution PR", head=src_branch, base=dst_branch, maintainer_can_modify=github.GithubObject.NotSet, draft=False)
+        self.repo.create_pull(title=title, body=body, head=src_branch, base=dst_branch, maintainer_can_modify=github.GithubObject.NotSet, draft=False)
 
     def get_all_branches(self):
         """
