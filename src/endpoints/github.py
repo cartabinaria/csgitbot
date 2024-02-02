@@ -1,5 +1,4 @@
-from fastapi import Depends, HTTPException, Security, UploadFile, Form, File, exceptions, Request, responses, status
-from typing import Union, Annotated, Optional
+from fastapi import Depends, HTTPException, Security, UploadFile, Form, File
 from pydantic import BaseModel
 from fastapi import APIRouter
 import os
@@ -8,7 +7,6 @@ from src.github_utils import GithubUtils
 from src.my_types import Author, BranchName
 import src.configs as configs
 from src.logs import logging
-from src.service import MainService
 from src.endpoints.oauth import decode_token, OAuthCallbackResponse
 import src.services.repomanager as repomanager
 
@@ -88,7 +86,7 @@ async def upload_files(repository: str = Form(...), path: str = Form(...), files
 
     # see https://gitpython.readthedocs.io/en/stable/intro.html#limitations
     del curr_repo
-    return {"detail": f"{len(files)} files uploaded successfully"}
+    return {"detail": f"{len(files)} files uploaded successfully", "branch_name": branch_name}
 
 @router.post("/create-pr/")
 async def create_pr(repository: str = Form(...), branch_name: str = Form(...), title: str = Form(...), payload: OAuthCallbackResponse = Security(decode_token)):
@@ -137,72 +135,6 @@ async def create_pr(repository: str = Form(...), branch_name: str = Form(...), t
 
     return {"detail": f"PR created successfully"}
     
-# Old deprecated
-# @router.post("/{reponame}")
-# async def upload_and_pr(
-#     reponame: str, 
-#     file: Annotated[UploadFile, File()],
-#     username: Annotated[str | None, Form()] = None,
-#     email: Annotated[str | None, Form()] = None,
-#     pr_title: Annotated[str | None, Form()] = None,
-# ) -> Union[BasicResponse, ErrorResponse]:
-#     branch_name = service.generate_branch_name()
-
-#     try:
-#         assert isinstance(branch_name, str), "branch name is not a string"
-
-#         await service.upload_and_pr(
-#             reponame, 
-#             branch_name, 
-#             file,
-#             username,
-#             email,
-#             pr_title,
-#         )
-#     except Exception as e:
-#         logging.getLogger("github").error(f"Error occurred: {repr(e)}")
-#         return ErrorResponse(error=str(e))
-
-#     return BasicResponse(message="File uploaded")
-
-# Old deprecated
-# @router.post("/{reponame}/{branch_name}")
-# async def upload_and_pr_with_branch_name(
-#     reponame: str, 
-#     branch_name: str, 
-#     file: Annotated[UploadFile, File()],
-#     username: Annotated[str | None, Form()] = None,
-#     email: Annotated[str | None, Form()] = None,
-#     pr_title: Annotated[str | None, Form()] = None,
-# ) -> Union[BasicResponse, ErrorResponse]:
-#     # TODO: add path upload
-#     try:
-#         await service.upload_and_pr(
-#             reponame, 
-#             branch_name, 
-#             file,
-#             username,
-#             email,
-#             pr_title,
-#         )
-#     except Exception as e:
-#         logging.getLogger("github").error(f"Error occurred: {repr(e)}")
-#         return ErrorResponse(error=str(e))
-
-#     return BasicResponse(message="File uploaded")
-
-# Old deprecated
-# TODO: should change in such a way that deletes only branches that satisfy current branch format
-# @router.delete("/allbranches/{reponame}")
-# async def delete_all_branches(reponame: str) -> Union[BasicResponse, ErrorResponse]:
-#     try:
-#         service.delete_all_branches(reponame)
-#     except Exception as e:
-#         logging.getLogger("github").error(f"Error occurred: {repr(e)}")
-#         return ErrorResponse(error=str(e))
-
-#     return BasicResponse(message="All branches deleted")
-
 def init_github_service():
     global github_client
     if github_client is None:
