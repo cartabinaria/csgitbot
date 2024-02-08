@@ -37,6 +37,7 @@ async def redirect(code: str = Query(...)) -> OAuthCallbackResponse:
 
     if user_data["email"] is None:
         user_email = await get_user_email(access_token)
+        print(user_email)
         try:
             first_email = user_email[0]["email"]
         except IndexError:
@@ -56,6 +57,8 @@ async def redirect(code: str = Query(...)) -> OAuthCallbackResponse:
         key="access_token",
         value=create_access_token(callback_response.dict()),
         httponly=True,
+        samesite="none",
+        secure=True
     )
 
     return response
