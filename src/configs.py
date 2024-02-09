@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
 import pkg_resources
+from typing import Literal
 
 class JWTConfig(BaseModel):
     secret_key: str
@@ -16,6 +17,7 @@ class BaseConfig(BaseModel):
     branch_blacklist: list[str]
     github_token: str
     cpu_count: int
+    environment: Literal["development", "production"]
 
     # oauth attributes
     client_id: str
@@ -46,6 +48,7 @@ def init():
     bot_name = config["DEFAULT"]["bot_name"]
     branch_blacklist = config["DEFAULT"]["branch_blacklist"]
     redirect_uri = config["DEFAULT"]["redirect_uri"]
+    environment = config["DEFAULT"]["environment"]
 
     port = int(config["server"]["port"])
 
@@ -70,6 +73,8 @@ def init():
                   repo_owner=repo_owner,
                   branch_blacklist=branch_blacklist.split(","),
                   cpu_count=cpu_count,
+                  environment=environment,
+
                   github_token=github_token,
                   client_id=client_id,
                   client_secret=client_secret,
