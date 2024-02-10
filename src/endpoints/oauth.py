@@ -49,6 +49,7 @@ async def redirect(code: str = Query(...)) -> OAuthCallbackResponse:
         access_token=access_token,
         username=user_data["login"],
         email=user_data["email"],
+        expiration=datetime.datetime.utcnow() + datetime.timedelta(minutes=configs.config.jwt_config.access_token_expiration)
     )
 
     response = JSONResponse(content=callback_response.dict())
