@@ -21,13 +21,19 @@ class GithubUser(BaseModel):
         )
 
 class GithubUtils():
-    github: Github
-    repo: Repository.Repository
-    repo_owner: str
+
+    def _throw_if_repo_is_none(func):
+        # Decorator that throws when self.repo is None
+        def wrapper(self, *args, **kwargs):
+            if self.repo is None:
+                raise ValueError("Repo is not set")
+            return func(self, *args, **kwargs)
+        return wrapper
 
     def __init__(self, github_token: str, repo_owner: str):
-        self.github = Github(github_token)
-        self.repo_owner = repo_owner
+        self.github: Github = Github(github_token)
+        self.repo: Repository.Repository = None
+        self.repo_owner: str = repo_owner
 
     def set_repo(self, repo_name: str) -> bool:
         """
@@ -42,11 +48,7 @@ class GithubUtils():
         
         return True
 
-    def generate_branch_name(self) -> str:
-        """
-        Generate a new branch name as uuid
-        """
-    
+    @_throw_if_repo_is_none
     def create_branch(self, branch_name: str, base_branch: str = "main"):
         """
         Create a new branch
@@ -55,6 +57,7 @@ class GithubUtils():
         base_branch = self.repo.get_branch(base_branch)
         self.repo.create_git_ref(f"refs/heads/{branch_name}", base_branch.commit.sha)
     
+    @_throw_if_repo_is_none
     def branch_exists(self, branch_name: str) -> bool:
         """
         Get a branch
@@ -70,6 +73,7 @@ class GithubUtils():
         
         return True
 
+    @_throw_if_repo_is_none
     def create_file(self,
                     branch_name: str, 
                     file_path: str, 
@@ -92,6 +96,7 @@ class GithubUtils():
                                     branch_name, 
                                     author=author.to_input_git_author() if author else github.GithubObject.NotSet)
 
+    @_throw_if_repo_is_none
     def create_pr(self, src_branch: str, dst_branch: str, title: Optional[str], body: Optional[str] = None):
         """
         Create a new PR
@@ -105,6 +110,7 @@ class GithubUtils():
         logger.info(f"Creating PR from {src_branch} to {dst_branch} on repo: {self.repo.name}")
         self.repo.create_pull(title=title, body=body, head=src_branch, base=dst_branch, maintainer_can_modify=github.GithubObject.NotSet, draft=False)
 
+    @_throw_if_repo_is_none
     def get_all_branches(self):
         """
         Get all branches
@@ -112,6 +118,7 @@ class GithubUtils():
         logger.info(f"Getting all branches on repo: {self.repo.name}")
         return self.repo.get_branches()
 
+    @_throw_if_repo_is_none
     def delete_branch(self, branch_name: str):
         logger.info(f"Deleting branch: '{branch_name}' on repo: '{self.repo.name}'")
         self.repo.get_git_ref(f"heads/{branch_name}").delete()
