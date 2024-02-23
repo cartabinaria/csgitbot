@@ -21,10 +21,11 @@ class GithubUser(BaseModel):
         )
 
 class GithubUtils():
-
     def _throw_if_repo_is_none(func):
         # Decorator that throws when self.repo is None
         def wrapper(self, *args, **kwargs):
+            print(self)
+            print(self.repo)
             if self.repo is None:
                 raise ValueError("Repo is not set")
             return func(self, *args, **kwargs)
@@ -108,7 +109,7 @@ class GithubUtils():
             body = "pr created automatically"
 
         logger.info(f"Creating PR from {src_branch} to {dst_branch} on repo: {self.repo.name}")
-        self.repo.create_pull(title=title, body=body, head=src_branch, base=dst_branch, maintainer_can_modify=github.GithubObject.NotSet, draft=False)
+        return self.repo.create_pull(title=title, body=body, head=src_branch, base=dst_branch, maintainer_can_modify=github.GithubObject.NotSet, draft=False)
 
     @_throw_if_repo_is_none
     def get_all_branches(self):

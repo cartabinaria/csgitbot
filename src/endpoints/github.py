@@ -21,6 +21,14 @@ class BasicResponse(BaseModel):
 class ErrorResponse(BaseModel):
     error: str
 
+class UploadFilesResponse(BaseModel):
+    detail: str
+    branch_name: str
+
+class CreateFilesResponse(BaseModel):
+    detail: str
+    url: str
+
 @router.get("/health")
 async def health_check():
     return {"status": "ok"}
@@ -86,7 +94,7 @@ async def upload_files(repository: str = Form(...), path: str = Form(...), files
 
     # see https://gitpython.readthedocs.io/en/stable/intro.html#limitations
     del curr_repo
-    return {"detail": f"{len(files)} files uploaded successfully", "branch_name": branch_name}
+    return UploadFilesResponse(detail=f"{len(files)} files uploaded successfully", branch_name=branch_name)
 
 @router.post("/create-pr/")
 async def create_pr(repository: str = Form(...), branch_name: str = Form(...), title: str = Form(...), payload: OAuthCallbackResponse = Security(decode_token)):
@@ -128,12 +136,13 @@ async def create_pr(repository: str = Form(...), branch_name: str = Form(...), t
         raise HTTPException(status_code=403, detail="You are not allowed to create PR from this branch.")
 
     try:
-        github_client.create_pr(branch_name, "main", title=title)
+        pull_request = github_client.create_pr(branch_name, "main", title=title)
+        html_url = pull_request.html_url
     except Exception as e:
         logging.getLogger("github").error(f"Error occurred: {repr(e)}")
         raise HTTPException(status_code=500, detail="Failed to create PR.")
 
-    return {"detail": f"PR created successfully"}
+    return CreateFilesResponse(detail=f"PR created successfully", url=html_url)
     
 def init_github_service():
     global github_client

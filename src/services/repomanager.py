@@ -151,4 +151,4 @@ def create_branch_name(author: Author) -> str:
         Branch name.
     """
 
-    return f"{author.name}-{datetime.datetime.now().strftime('%Y%m%d-%Hh%Mm')}-{uuid.uuid4()}"
+    return f"{author.name}/{datetime.datetime.now().strftime('%Y%m%d-%Hh%Mm')}/{uuid.uuid4()}"
