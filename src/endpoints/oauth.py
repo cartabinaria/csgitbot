@@ -59,7 +59,8 @@ async def redirect(code: str = Query(...)) -> OAuthCallbackResponse:
         value=create_access_token(callback_response.dict()),
         httponly=True,
         samesite="none",
-        secure=True
+        secure=True,
+        partitioned=True
     )
 
     return response
