@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from github import Github, Repository
+from github import Github, Repository, GithubIntegration
 import github
 import datetime
 from typing import Optional
@@ -7,7 +7,6 @@ from .logs import logging
 from . import configs
 
 logger = logging.getLogger("service")
-
 class GithubUser(BaseModel):
     user: str
     email: str    
@@ -31,10 +30,25 @@ class GithubUtils():
             return func(self, *args, **kwargs)
         return wrapper
 
-    def __init__(self, github_token: str, repo_owner: str):
-        self.github: Github = Github(github_token)
+    def __init__(self):
+        # TODO: could be a good idea to move this in a global so I don't have to read every time
+        try:
+            with open(configs.config.key_path, "r") as f:
+                private_key = f.read()
+        except Exception as e:
+            logger.error(f"Error occurred in reading key file: {str(e)}")
+            raise e
+
+        integration = GithubIntegration(configs.config.app_id, private_key)
+        # TODO: in future versions should add a config for owners and orgs.
+        install = integration.get_org_installation(configs.config.repo_owner)
+        access = integration.get_access_token(install.id, {
+            "contents": "read", # check branch status https://docs.github.com/en/rest/branches/branches?apiVersion=2022-11-28#get-a-branch
+            "pull_requests": "write"
+        })
+        self.github: Github = Github(access.token)
         self.repo: Repository.Repository = None
-        self.repo_owner: str = repo_owner
+        self.repo_owner: str = configs.config.repo_owner
 
     def set_repo(self, repo_name: str) -> bool:
         """

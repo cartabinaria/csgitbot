@@ -18,11 +18,13 @@ class BaseConfig(BaseModel):
     github_token: str
     cpu_count: int
     environment: Literal["development", "production"]
+    key_path: str
 
     # oauth attributes
     client_id: str
     client_secret: str
     redirect_uri: str
+    app_id: str
 
     # jwt attributes
     jwt_config: JWTConfig
@@ -49,14 +51,16 @@ def init():
     branch_blacklist = config["DEFAULT"]["branch_blacklist"]
     redirect_uri = config["DEFAULT"]["redirect_uri"]
     environment = config["DEFAULT"]["environment"]
+    key_path = config["server"]["key_path"]
 
     port = int(config["server"]["port"])
 
-    load_env_files(["GITHUB_TOKEN", "CLIENT_ID", "CLIENT_SECRET", "JWT_SECRET"])
+    load_env_files(["GITHUB_TOKEN", "CLIENT_ID", "CLIENT_SECRET", "JWT_SECRET", "GITHUB_APP_ID"])
     github_token = os.getenv("GITHUB_TOKEN")
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
     jwt_secret = os.getenv("JWT_SECRET")
+    app_id = os.getenv("GITHUB_APP_ID")
 
     cpu_count = os.cpu_count()
     if cpu_count is None:
@@ -74,11 +78,13 @@ def init():
                   branch_blacklist=branch_blacklist.split(","),
                   cpu_count=cpu_count,
                   environment=environment,
+                  key_path=key_path,
 
                   github_token=github_token,
                   client_id=client_id,
                   client_secret=client_secret,
                   redirect_uri=redirect_uri,
+                  app_id=app_id,
 
                   jwt_config=jwt_config,
     )

@@ -12,7 +12,6 @@ import src.services.repomanager as repomanager
 
 
 router = APIRouter()
-github_client = None
 REPOS_PATH = "repos"
 
 class BasicResponse(BaseModel):
@@ -127,6 +126,7 @@ async def create_pr(repository: str = Form(...), branch_name: str = Form(...), t
         raise HTTPException(status_code=500, detail=f"Repository {repository} is not correctly configured in the system.")
     
     # check if remote has the branch
+    github_client = GithubUtils()
     github_client.set_repo(repository)
     if not github_client.branch_exists(branch_name):
         raise HTTPException(status_code=400, detail=f"Branch {branch_name} does not exist in the repository.")
@@ -145,6 +145,11 @@ async def create_pr(repository: str = Form(...), branch_name: str = Form(...), t
     return CreateFilesResponse(detail=f"PR created successfully", url=html_url)
     
 def init_github_service():
-    global github_client
-    if github_client is None:
-        github_client = GithubUtils(configs.config.github_token, configs.config.repo_owner)
+    # check key path is present
+    # TODO: also check it has correct format.
+    if not os.path.exists(configs.config.key_path):
+        logging.getLogger("github").error(f"Key path {configs.config.key_path} does not exist.")
+        raise FileNotFoundError(f"Key path {configs.config.key_path} does not exist.")
+
+    # DEPRECATED, should be removed
+    pass

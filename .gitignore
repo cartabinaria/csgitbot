@@ -6,3 +6,4 @@ app.log
 dist
 repos
 secrets
+key.pem

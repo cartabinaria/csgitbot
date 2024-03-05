@@ -1,0 +1,2 @@
+# v0.1.2
+Changed `GithubUtils`, now should be called everytime. For security reasons, integration key should work for just 10 mins. See [Here](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/authenticating-as-a-github-app-installation#using-an-installation-access-token-to-authenticate-as-an-app-installation)
