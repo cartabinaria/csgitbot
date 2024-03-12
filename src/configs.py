@@ -19,6 +19,7 @@ class BaseConfig(BaseModel):
     cpu_count: int
     environment: Literal["development", "production"]
     key_path: str
+    is_github_app: bool = False
 
     # oauth attributes
     client_id: str
@@ -40,6 +41,8 @@ def load_env_files(keys: list[str]):
             exit(1)
 
 def init():
+    # TODO: refactorare, .ini è meglio che sia json così pydantic fa in automatico
+
     global config
 
     config_path = pkg_resources.resource_filename("csgitbot", "config.ini")
@@ -52,8 +55,8 @@ def init():
     redirect_uri = config["DEFAULT"]["redirect_uri"]
     environment = config["DEFAULT"]["environment"]
     key_path = config["server"]["key_path"]
-
     port = int(config["server"]["port"])
+    is_github_app = config["server"].getboolean("is_github_app")
 
     load_env_files(["GITHUB_TOKEN", "CLIENT_ID", "CLIENT_SECRET", "JWT_SECRET", "GITHUB_APP_ID"])
     github_token = os.getenv("GITHUB_TOKEN")
@@ -79,6 +82,7 @@ def init():
                   cpu_count=cpu_count,
                   environment=environment,
                   key_path=key_path,
+                  is_github_app=is_github_app,
 
                   github_token=github_token,
                   client_id=client_id,

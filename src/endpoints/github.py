@@ -64,6 +64,7 @@ async def upload_files(repository: str = Form(...), path: str = Form(...), files
         raise HTTPException(status_code=500, detail=f"Repository {repository} is not correctly configured in the system.")
     
     try:
+        logging.getLogger("github").info(f"Pulling the repository {repository}")
         curr_repo.pull()
         author: Author = Author(name=payload.username, email=payload.email)
         branch_name = repomanager.create_branch_name(author)
@@ -73,6 +74,7 @@ async def upload_files(repository: str = Form(...), path: str = Form(...), files
         upload_dir = os.path.join(repository_path, path)
         os.makedirs(upload_dir, exist_ok=True)
 
+        logging.getLogger("github").info(f"Uploading {len(files)} files to the repository {repository}")
         files_to_commit = [""] * len(files)
         for i, file in enumerate(files):
             file_path = os.path.join(upload_dir, file.filename)
@@ -82,6 +84,7 @@ async def upload_files(repository: str = Form(...), path: str = Form(...), files
             repo_relative_path = os.path.join(path, file.filename)
             files_to_commit[i] = repo_relative_path
 
+        logging.getLogger("github").info(f"Committing and pushing files to the repository {repository}")
         curr_repo.commit_files(files_to_commit, author)
         curr_repo.push()
         curr_repo.move_to_default()
@@ -147,7 +150,7 @@ async def create_pr(repository: str = Form(...), branch_name: str = Form(...), t
 def init_github_service():
     # check key path is present
     # TODO: also check it has correct format.
-    if not os.path.exists(configs.config.key_path):
+    if configs.config.is_github_app and not os.path.exists(configs.config.key_path):
         logging.getLogger("github").error(f"Key path {configs.config.key_path} does not exist.")
         raise FileNotFoundError(f"Key path {configs.config.key_path} does not exist.")
 

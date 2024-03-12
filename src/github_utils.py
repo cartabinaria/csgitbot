@@ -32,21 +32,28 @@ class GithubUtils():
 
     def __init__(self):
         # TODO: could be a good idea to move this in a global so I don't have to read every time
-        try:
-            with open(configs.config.key_path, "r") as f:
-                private_key = f.read()
-        except Exception as e:
-            logger.error(f"Error occurred in reading key file: {str(e)}")
-            raise e
+        token = None
+        if configs.config.is_github_app:
+            try:
+                with open(configs.config.key_path, "r") as f:
+                    private_key = f.read()
+            except Exception as e:
+                logger.error(f"Error occurred in reading key file: {str(e)}")
+                raise e
 
-        integration = GithubIntegration(configs.config.app_id, private_key)
-        # TODO: in future versions should add a config for owners and orgs.
-        install = integration.get_org_installation(configs.config.repo_owner)
-        access = integration.get_access_token(install.id, {
-            "contents": "read", # check branch status https://docs.github.com/en/rest/branches/branches?apiVersion=2022-11-28#get-a-branch
-            "pull_requests": "write"
-        })
-        self.github: Github = Github(access.token)
+            integration = GithubIntegration(configs.config.app_id, private_key)
+            # TODO: in future versions should add a config for owners and orgs.
+            install = integration.get_org_installation(configs.config.repo_owner)
+            access = integration.get_access_token(install.id, {
+                "contents": "read", # check branch status https://docs.github.com/en/rest/branches/branches?apiVersion=2022-11-28#get-a-branch
+                "pull_requests": "write"
+            })
+
+            token = access.token
+        else:
+            token = configs.config.github_token
+        
+        self.github: Github = Github(token)
         self.repo: Repository.Repository = None
         self.repo_owner: str = configs.config.repo_owner
 
