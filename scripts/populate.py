@@ -7,7 +7,7 @@ import git
 dotenv.load_dotenv()
 github_token = os.getenv("GITHUB_TOKEN")
 
-BASE = f"https://csunibo-access:{github_token}@github.com/csunibo/"
+BASE = f"https://cartabinaria-access:{github_token}@github.com/csunibo/"
 
 class TeachingsList(BaseModel):
     mandatory: list[str]
@@ -25,7 +25,7 @@ class RepoJson(BaseModel):
     years: list[YearModel] | None
 
 def get_main_json():
-    url = "https://github.com/csunibo/config/raw/main/degrees.json"
+    url = "https://github.com/cartabinaria/config/raw/main/degrees.json"
 
     import requests
     response = requests.get(url)

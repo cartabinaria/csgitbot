@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "csgitbot"
 version = "0.1.0"
-description = "A bot to manage csunibo pull requests"
+description = "A bot to manage CartaBinaria pull requests"
 authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
 readme = "README.md"
 include = [

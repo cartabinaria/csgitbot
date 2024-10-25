@@ -10,21 +10,22 @@ end_insert -->
 # CSGITBOT
 
 
-See [the wiki](https://csunibo.github.io/wiki/bot/csgitbot/) for more information.
+See [the wiki](https:/cartabinaria.students.cs.unibo.it/wiki/bot/csgitbot/) for
+more information.
 <!-- endremove -->
 
 <!-- insert
-See [github repo](https://github.com/csunibo/csgitbot) for the code
+See [github repo](https://github.com/cartabinaria/csgitbot) for the code
 end_insert -->
 
-A github bot used to manage workflows in csunibo
+A github bot used to manage workflows in CartaBinaria
 
 ## How to run
 
 1. Create a .env file in the project root, follow `.env.example` schema
 2. Install poetry, a python package manager, similar to npm
 3. Run `poetry install`
-4. Set the `config.ini` owner to correct owner repo, e.g. `csunibo`, or a user, you should have write and PR access to this
+4. Set the `config.ini` owner to correct owner repo, e.g. `cartabinaria`, or a user, you should have write and PR access to this
 5. Serve the application with `poetry run start`
 6. The application should be able to accept requests now.
 
