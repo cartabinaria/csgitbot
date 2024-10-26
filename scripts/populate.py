@@ -7,7 +7,7 @@ import git
 dotenv.load_dotenv()
 github_token = os.getenv("GITHUB_TOKEN")
 
-BASE = f"https://cartabinaria-access:{github_token}@github.com/csunibo/"
+BASE = f"https://cartabinaria-access:{github_token}@github.com/cartabinaria/"
 
 class TeachingsList(BaseModel):
     mandatory: list[str]
