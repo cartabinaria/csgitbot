@@ -34,6 +34,11 @@ A github bot used to manage workflows in CartaBinaria
 2. Create a repository for the tests on github.
 3. Run some scripts listed  in `src/test.py` with `poetry run python3 src/test.py [flags]` and you should see some logs on the server end.
 
+## Tests
+
+After installing the dependencies, run `python -m unittest discover -s tests -v`.
+The upload tests use temporary files and fake authentication and repository operations; they do not contact GitHub.
+
 # Features
 
 ## Automatic pull request
